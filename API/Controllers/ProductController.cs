@@ -1,5 +1,4 @@
 ﻿using Business.Products;
-using DataAccess.Entities;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using PalMazadStore.Migrations;

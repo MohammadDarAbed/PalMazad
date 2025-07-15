@@ -14,7 +14,7 @@ namespace Business.Products
                 Name = productModel.Name,
                 CreatedBy = "-",
                 Description = productModel.Description,
-                CategoryId = productModel.CategoryId,
+                CategoryId = productModel.CategoryId ?? 0,
                 Price = productModel.Price,
                 ProductQR = productModel.ProductQR,
                 ModifiedBy = "-",

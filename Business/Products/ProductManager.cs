@@ -1,9 +1,6 @@
 ﻿
-using DataAccess.Entities;
 using DataAccess.Models;
 using DataAccess.Repositories;
-using PalMazadStore.Migrations;
-using Shared.Interfaces;
 
 namespace Business.Products
 {
@@ -41,6 +38,10 @@ namespace Business.Products
         public async Task<ProductBo> GetProductById(int productId)
         {
             var product = await _productRepo.GetByIdAsync(productId);
+            if (product == null)
+            {
+                ExceptionManager.ThrowItemNotFoundException("Product", productId);
+            }
             return product.MapEntityToBo();
         }
 

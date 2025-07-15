@@ -2,10 +2,11 @@
 {
     public enum Category
     {
-        Vhecle = 1,
-        Food = 2,
-        Devices = 3,
-        Land = 4,
-        Clothe = 5
+        Other = 1,
+        Vhecle = 2,
+        Food = 3,
+        Device = 4,
+        Land = 5,
+        Clothe = 6
     }
 }

@@ -1,8 +1,8 @@
-﻿using Business.Infrastructure.Exceptions;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Microsoft.Extensions.Hosting;
+using Business.Shared.Exceptions;
 
 namespace Business.Middlewares
 {

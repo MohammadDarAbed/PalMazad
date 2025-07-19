@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace Business.Infrastructure.Exceptions
+namespace Business.Shared.Exceptions
 {
     public static class ValidationMessages
     {
@@ -10,6 +10,9 @@ namespace Business.Infrastructure.Exceptions
 
         public static string GetAlreadyExistsMessage(string entityName, string value) =>
             $"{entityName} with value '{value}' already exists.";
+
+        public static string GetAlreadyDeletedMessage(string entityName, string value) =>
+            $"{entityName} with value '{value}' already deleted.";
 
     }
 

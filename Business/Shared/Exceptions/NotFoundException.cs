@@ -1,6 +1,4 @@
-﻿
-
-namespace Business.Infrastructure.Exceptions
+﻿namespace Business.Shared.Exceptions
 {
     public class NotFoundException : Exception
     {

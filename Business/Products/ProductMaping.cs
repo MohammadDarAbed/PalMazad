@@ -1,4 +1,5 @@
 ﻿
+using Business.Users;
 using DataAccess.Entities;
 using DataAccess.Models;
 
@@ -12,11 +13,15 @@ namespace Business.Products
             var productEntity = new ProductEntity
             {
                 Name = productModel.Name,
-                CreatedBy = "-",
-                Description = productModel.Description,
                 CategoryId = productModel.CategoryId ?? 0,
                 Price = productModel.Price,
                 ProductQR = productModel.ProductQR,
+                Condition = productModel.Condition,
+                IsHiddenSellerInfo = productModel.IsHiddenSellerInfo,
+                IsPublished = productModel.IsPublished,                
+                CreatedBy = "-",
+                Description = productModel.Description,
+                SellerId = productModel.SellerId,
                 ModifiedBy = "-",
                 CreatedOn = DateTimeOffset.Now,
             };
@@ -30,11 +35,14 @@ namespace Business.Products
             {
                 Id = productEntity.Id,
                 Name = productEntity.Name,
-                Description = productEntity.Description,
-                CategoryId = productEntity.CategoryId,
+                Description = productEntity.Description ?? "",
+                Category = productEntity.Category.Name,
+                Condition = Enum.GetName(typeof(ProductCondition), productEntity.Condition) ?? "",
+                IsHiddenSellerInfo = productEntity.IsHiddenSellerInfo,
                 IsDeleted = productEntity.IsDeleted,
                 Price = productEntity.Price,
                 ProductQR = productEntity.ProductQR,
+                Seller = productEntity.Seller.MapEntityToBo(),
                 CreatedBy= productEntity.CreatedBy,
                 CreatedOn = productEntity.CreatedOn,
                 ModifiedBy= productEntity.ModifiedBy,

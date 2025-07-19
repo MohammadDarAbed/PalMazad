@@ -9,12 +9,12 @@
 	<ItemGroup>
 		<PackageReference Include="Autofac" Version="8.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+		<PackageReference Include="PalMazadShared" Version="1.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\DataAccess.SQL\DataAccess.csproj" />
 		<ProjectReference Include="..\Migrations\Migrations.csproj" />
-		<PackageReference Include="PalMazadShared_2" Version="1.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
 	</ItemGroup>
 

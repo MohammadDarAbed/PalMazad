@@ -1,6 +1,7 @@
 ﻿
 namespace DataAccess.Models
 {
+    using DataAccess.Entities;
     using System.ComponentModel.DataAnnotations;
 
     public class ProductModel
@@ -14,13 +15,20 @@ namespace DataAccess.Models
         public decimal Price { get; set; }
 
         [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required(ErrorMessage = "Category is required.")]
-        public Category? CategoryId { get; set; }
+        public int? CategoryId { get; set; }
 
         [StringLength(50, ErrorMessage = "Product QR code cannot exceed 50 characters.")]
         public string ProductQR { get; set; }
+
+        public ProductCondition Condition { get; set; }
+        public int SellerId { get; set; } = 1;
+
+        public bool IsPublished { get; set; } = true;
+        public bool IsHiddenSellerInfo { get; set; }
+
     }
 
 }

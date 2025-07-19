@@ -9,38 +9,181 @@ public class AppDbContext : BaseDbContext
     {
     }
 
-    public DbSet<ProductEntity> Products { get; set; }
-    public DbSet<OrderEntity> Orders { get; set; }
+    public DbSet<UserEntity> Users { get; set; } = default!;
+    public DbSet<ProductEntity> Products { get; set; } = default!;
+    public DbSet<CategoryEntity> Categories { get; set; } = default!;
+    public DbSet<OrderEntity> Orders { get; set; } = default!;
+    public DbSet<PaymentEntity> Payments { get; set; } = default!;
+    public DbSet<CommissionSettingEntity> CommissionSettings { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Soft delete filters
-        modelBuilder.Entity<ProductEntity>().HasQueryFilter(e => !e.IsDeleted);
-        modelBuilder.Entity<OrderEntity>().HasQueryFilter(e => !e.IsDeleted);
+        // UserEntity
+        modelBuilder.Entity<UserEntity>(entity =>
+        {
+            entity.HasKey(u => u.Id);
 
-        // Product config
+            entity.Property(u => u.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(u => u.Email)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            entity.Property(u => u.PhoneNumber)
+                .HasMaxLength(20);
+
+            entity.Property(u => u.PasswordHash)
+                .IsRequired();
+
+            entity.Property(u => u.IsSeller)
+                .IsRequired();
+
+            entity.Property(u => u.IsVerifiedSeller)
+                .IsRequired();
+
+            entity.Property(u => u.IsIdentityHidden)
+                .IsRequired();
+
+            entity.Property(u => u.CreatedOn)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            // Relationships
+            entity.HasMany(u => u.Products)
+                .WithOne(p => p.Seller)
+                .HasForeignKey(p => p.SellerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(u => u.OrdersAsBuyer)
+                .WithOne(o => o.Buyer)
+                .HasForeignKey(o => o.BuyerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(u => u.OrdersAsSeller)
+                .WithOne(o => o.Seller)
+                .HasForeignKey(o => o.SellerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // CategoryEntity
+        modelBuilder.Entity<CategoryEntity>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+
+            entity.Property(c => c.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.HasMany(c => c.Products)
+                .WithOne(p => p.Category)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // ProductEntity
         modelBuilder.Entity<ProductEntity>(entity =>
         {
-            entity.Property(p => p.Name).IsRequired().HasMaxLength(100);
-            entity.Property(p => p.Description).HasMaxLength(500);
-            entity.Property(p => p.ProductQR).IsRequired().HasMaxLength(200);
-            entity.Property(p => p.Price).HasColumnType("decimal(18,2)");
+            entity.HasKey(p => p.Id);
+
+            entity.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.Property(p => p.Description)
+                .HasMaxLength(2000);
+
+            entity.Property(p => p.Price)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+
+            // Store enum as string (optional, comment if you want int)
+            entity.Property(p => p.Condition)
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(p => p.IsPublished)
+                .IsRequired()
+                .HasDefaultValue(true);
+
+            entity.Property(p => p.IsHiddenSellerInfo)
+                .IsRequired()
+                .HasDefaultValue(false);
+
+            entity.Property(u => u.CreatedOn)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            entity.HasMany(p => p.Orders)
+                .WithOne(o => o.Product)
+                .HasForeignKey(o => o.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // Order config
+        // OrderEntity
         modelBuilder.Entity<OrderEntity>(entity =>
         {
-            entity.HasOne(o => o.Product)
-                  .WithMany() // or WithMany(p => p.Orders) if added
-                  .HasForeignKey(o => o.ProductId);
+            entity.HasKey(o => o.Id);
 
-            entity.Property(o => o.BuyerName).IsRequired().HasMaxLength(100);
-            entity.Property(o => o.BuyerPhone).IsRequired().HasMaxLength(15);
-            entity.Property(o => o.Status).HasConversion<int>(); // Store enum as int
+            entity.Property(o => o.TotalAmount)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+
+            entity.Property(o => o.CommissionAmount)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+
+            entity.Property(o => o.Status)
+                .HasConversion<string>()
+                .IsRequired();
+
+            entity.Property(o => o.CreatedOn)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            // Relationship to Payment one-to-one
+            entity.HasOne(o => o.Payment)
+                .WithOne(p => p.Order)
+                .HasForeignKey<PaymentEntity>(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Buyer and Seller foreign keys configured via UserEntity above
+        });
+
+        // PaymentEntity
+        modelBuilder.Entity<PaymentEntity>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+
+            entity.Property(p => p.Amount)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+
+            entity.Property(p => p.PaymentMethod)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(p => p.IsSuccessful)
+                .IsRequired();
+
+            entity.Property(p => p.CreatedOn)
+                .HasDefaultValueSql("GETUTCDATE()");
+        });
+
+        // CommissionSettingEntity
+        modelBuilder.Entity<CommissionSettingEntity>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+
+            entity.Property(c => c.Percentage)
+                .IsRequired()
+                .HasColumnType("decimal(5,4)"); // e.g., 0.1000 = 10%
+
+            entity.Property(c => c.ActiveFromDate)
+                .IsRequired();
         });
     }
+
 
 
 }

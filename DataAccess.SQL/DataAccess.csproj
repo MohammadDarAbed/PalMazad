@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PalMazadShared_2" Version="1.0.1" />
+    <PackageReference Include="PalMazadShared" Version="1.0.6" />
   </ItemGroup>
 	
 </Project>

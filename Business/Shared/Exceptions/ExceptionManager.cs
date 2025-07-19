@@ -1,4 +1,4 @@
-﻿using Business.Infrastructure.Exceptions;
+﻿using Business.Shared.Exceptions;
 using System.ComponentModel.DataAnnotations;
 public static class ExceptionManager
 {

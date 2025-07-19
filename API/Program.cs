@@ -2,7 +2,6 @@ using Autofac;
 using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
 using Business.Infrastructure;
-using Business.Infrastructure.Exceptions;
 using Business.Middlewares;
 using Microsoft.EntityFrameworkCore;
 using Shared.Infrastructure;

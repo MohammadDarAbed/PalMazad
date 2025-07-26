@@ -4,11 +4,11 @@ using Business.Shared;
 using DataAccess.Models;
 using DataAccess.Repositories;
 
-namespace Business.Categorys
+namespace Business.Categories
 {
     public interface ICategoryManager
     {
-        Task<List<CategoryModelBo>> GetCategorys();
+        Task<List<CategoryModelBo>> GetCategories();
         Task<CategoryModelBo> GetCategoryById(int categoryId);
         Task<CategoryModelBo> CreateCategory(CategoryModel categoryModel);
         Task<CategoryModelBo> UpdateCategory(int categoryId, CategoryModel categoryModel);
@@ -17,10 +17,10 @@ namespace Business.Categorys
 
     public class CategoryManager(ICategoryRepository _categoryRepo) : ICategoryManager
     {        
-        public async Task<List<CategoryModelBo>> GetCategorys()
+        public async Task<List<CategoryModelBo>> GetCategories()
         {
-            var categorys = await _categoryRepo.GetAllCategoriesAsync();
-            return categorys.Select(p => p.MapEntityToBo()).ToList();
+            var categories = await _categoryRepo.GetAllCategoriesAsync();
+            return categories.Select(p => p.MapEntityToBo()).ToList();
 
         }
 

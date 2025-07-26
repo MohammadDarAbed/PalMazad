@@ -13,9 +13,10 @@ namespace Business.Users
             {
                 Email = userModel.Email,
                 Name = userModel.Name,
+                PasswordHash = userModel.PasswordHash,
                 IsIdentityHidden = userModel.IsIdentityHidden,
                 IsSeller = userModel.IsSeller,
-                ModifiedOn = userModel.ModifiedOn,
+                ModifiedOn = DateTimeOffset.Now,
                 IsVerifiedSeller = userModel.IsVerifiedSeller,  
                 PhoneNumber = userModel.PhoneNumber,                
                 CreatedBy = "-",

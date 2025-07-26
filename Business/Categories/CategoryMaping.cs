@@ -3,7 +3,7 @@ using Business.Categories;
 using DataAccess.Entities;
 using DataAccess.Models;
 
-namespace Business.Categorys
+namespace Business.Categories
 {
     public static class CategoryMaping
     {

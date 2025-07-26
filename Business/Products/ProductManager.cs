@@ -1,4 +1,5 @@
 ﻿
+using Business.Categories;
 using Business.Shared;
 using DataAccess.Models;
 using DataAccess.Repositories;
@@ -14,7 +15,7 @@ namespace Business.Products
         Task DeleteProduct(int id);
     }
 
-    public class ProductManager(IProductRepository _productRepo) : IProductManager
+    public class ProductManager(IProductRepository _productRepo, ICategoryRepository _category) : IProductManager
     {        
         public async Task<List<ProductBo>> GetProducts()
         {
@@ -35,6 +36,8 @@ namespace Business.Products
         {
             var entity = productModel.MapModelToEntity();
             await _productRepo.CreateProductAsync(entity);
+            var category = await _category.GetByIdAsync(entity.CategoryId);
+            entity.Category = category;
             return entity.MapEntityToBo();
         }
 

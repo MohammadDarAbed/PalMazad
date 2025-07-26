@@ -1,5 +1,5 @@
 ﻿using Business.Categories;
-using Business.Categorys;
+using Business.Categories;
 using DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
 using PalMazadStore.Migrations;
@@ -31,12 +31,12 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("categorys")]
+        [Route("categories")]
         [ProducesResponseType(typeof(List<CategoryModelBo>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetCategorys()
+        public async Task<IActionResult> GetCategories()
         {
-            var categorys = await _prodductManager.GetCategorys();
-            return Ok(categorys);
+            var categories = await _prodductManager.GetCategories();
+            return Ok(categories);
         }
 
         [HttpGet]

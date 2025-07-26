@@ -1,4 +1,5 @@
 ﻿
+using Business.Categories;
 using Business.Users;
 using DataAccess.Entities;
 using DataAccess.Models;
@@ -36,9 +37,10 @@ namespace Business.Products
                 Id = productEntity.Id,
                 Name = productEntity.Name,
                 Description = productEntity.Description ?? "",
-                Category = productEntity.Category.Name,
+                Category = productEntity.Category.MapEntityToBo(),
                 Condition = Enum.GetName(typeof(ProductCondition), productEntity.Condition) ?? "",
                 IsHiddenSellerInfo = productEntity.IsHiddenSellerInfo,
+                IsPublished = productEntity.IsPublished,
                 IsDeleted = productEntity.IsDeleted,
                 Price = productEntity.Price,
                 ProductQR = productEntity.ProductQR,

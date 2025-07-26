@@ -1,7 +1,8 @@
 ﻿
 using Autofac;
-using Business.Categorys;
+using Business.Categories;
 using Business.Products;
+using Business.Users;
 using DataAccess.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,10 @@ namespace Business.Infrastructure
                 .RegisterType<CategoryManager>()
                 .As<ICategoryManager>()
                 .InstancePerLifetimeScope();
+            builder
+                .RegisterType<UserManager>()
+                .As<IUserManager>()
+                .InstancePerLifetimeScope();
 
             // Repositories:
             builder
@@ -58,6 +63,10 @@ namespace Business.Infrastructure
             builder
                 .RegisterType<CategoryRepository>()
                 .As<ICategoryRepository>()
+                .InstancePerLifetimeScope(); 
+            builder
+                .RegisterType<UserRepository>()
+                .As<IUserRepository>()
                 .InstancePerLifetimeScope();
 
             builder

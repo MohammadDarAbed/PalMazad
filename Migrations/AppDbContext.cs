@@ -15,6 +15,8 @@ public class AppDbContext : BaseDbContext
     public DbSet<OrderEntity> Orders { get; set; } = default!;
     public DbSet<PaymentEntity> Payments { get; set; } = default!;
     public DbSet<CommissionSettingEntity> CommissionSettings { get; set; } = default!;
+    public DbSet<CartItemEntity> CartItemEntity { get; set; } = default!;
+    public DbSet<CartEntity> CartEntity { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -182,6 +184,24 @@ public class AppDbContext : BaseDbContext
             entity.Property(c => c.ActiveFromDate)
                 .IsRequired();
         });
+
+        // CartEntity:
+        modelBuilder.Entity<CartEntity>()
+            .HasOne(c => c.User)
+            .WithOne(u => u.Cart)
+            .HasForeignKey<CartEntity>(c => c.UserId);
+
+        modelBuilder.Entity<CartItemEntity>()
+            .HasOne(ci => ci.Cart)
+            .WithMany(c => c.Items)
+            .HasForeignKey(ci => ci.CartId);
+
+        modelBuilder.Entity<CartItemEntity>()
+            .HasOne(ci => ci.Product)
+            .WithMany()
+            .HasForeignKey(ci => ci.ProductId)
+             .OnDelete(DeleteBehavior.NoAction);
+
     }
 
 

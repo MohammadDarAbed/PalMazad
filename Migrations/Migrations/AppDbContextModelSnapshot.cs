@@ -22,6 +22,83 @@ namespace Migrations.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DataAccess.Entities.CartEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("CartEntity");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.CartItemEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItemEntity");
+                });
+
             modelBuilder.Entity("DataAccess.Entities.CategoryEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -325,6 +402,36 @@ namespace Migrations.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DataAccess.Entities.CartEntity", b =>
+                {
+                    b.HasOne("DataAccess.Entities.UserEntity", "User")
+                        .WithOne("Cart")
+                        .HasForeignKey("DataAccess.Entities.CartEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.CartItemEntity", b =>
+                {
+                    b.HasOne("DataAccess.Entities.CartEntity", "Cart")
+                        .WithMany("Items")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.ProductEntity", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("DataAccess.Entities.OrderEntity", b =>
                 {
                     b.HasOne("DataAccess.Entities.UserEntity", "Buyer")
@@ -382,6 +489,11 @@ namespace Migrations.Migrations
                     b.Navigation("Seller");
                 });
 
+            modelBuilder.Entity("DataAccess.Entities.CartEntity", b =>
+                {
+                    b.Navigation("Items");
+                });
+
             modelBuilder.Entity("DataAccess.Entities.CategoryEntity", b =>
                 {
                     b.Navigation("Products");
@@ -399,6 +511,8 @@ namespace Migrations.Migrations
 
             modelBuilder.Entity("DataAccess.Entities.UserEntity", b =>
                 {
+                    b.Navigation("Cart");
+
                     b.Navigation("OrdersAsBuyer");
 
                     b.Navigation("OrdersAsSeller");

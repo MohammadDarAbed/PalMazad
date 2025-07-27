@@ -1,6 +1,7 @@
 ﻿
 using Autofac;
 using Business.Categories;
+using Business.Managers;
 using Business.Products;
 using Business.Users;
 using DataAccess.Repositories;
@@ -53,6 +54,10 @@ namespace Business.Infrastructure
                 .RegisterType<UserManager>()
                 .As<IUserManager>()
                 .InstancePerLifetimeScope();
+            builder
+                .RegisterType<CartManager>()
+                .As<ICartManager>()
+                .InstancePerLifetimeScope();
 
             // Repositories:
             builder
@@ -67,6 +72,10 @@ namespace Business.Infrastructure
             builder
                 .RegisterType<UserRepository>()
                 .As<IUserRepository>()
+                .InstancePerLifetimeScope();
+            builder
+                .RegisterType<CartRepository>()
+                .As<ICartRepository>()
                 .InstancePerLifetimeScope();
 
             builder

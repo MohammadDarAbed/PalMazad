@@ -3,7 +3,6 @@ namespace DataAccess.Models
 {
     public class CategoryModel
     {
-        public int Id { get; set; }
         public string Name { get; set; } = default!;
         public bool IsDeleted { get; set; }
         public required string CreatedBy { get; set; }

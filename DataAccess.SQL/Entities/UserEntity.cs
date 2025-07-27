@@ -21,6 +21,8 @@ namespace DataAccess.Entities
         public ICollection<ProductEntity> Products { get; set; } = new List<ProductEntity>(); // Products listed by this user
         public ICollection<OrderEntity> OrdersAsBuyer { get; set; } = new List<OrderEntity>(); // Orders made by this user
         public ICollection<OrderEntity> OrdersAsSeller { get; set; } = new List<OrderEntity>(); // Orders where this user is the seller
+        public CartEntity? Cart { get; set; } // optional one-to-one cart, full navigation from User to their cart
+
     }
 
 

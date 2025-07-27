@@ -1,0 +1,22 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+- group: GITHUB_TOKEN_PALMAZAD
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+
+  - script: |
+      git config --global user.name "Azure DevOps"
+      git config --global user.email "devops@palmazad.com"
+
+      git remote add github https://$(GITHUB_TOKEN_PALMAZAD)@github.com/MohammadDarAbed/PalMazad.git
+
+      git push github HEAD:main --force
+    displayName: 'Mirror Azure DevOps Repo to GitHub'

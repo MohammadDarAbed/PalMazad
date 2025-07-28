@@ -1,4 +1,4 @@
-trigger:
+﻿trigger:
   branches:
     include:
       - main
@@ -13,10 +13,16 @@ steps:
   - checkout: self
 
   - script: |
+      echo "✅ Configuring Git"
       git config --global user.name "Azure DevOps"
       git config --global user.email "devops@palmazad.com"
 
-      git remote add github https://$(GITHUB_TOKEN_PALMAZAD)@github.com/MohammadDarAbed/PalMazad.git
+      echo "✅ Adding GitHub remote"
+      git remote add github https://$(GITHUB_TOKEN)@github.com/MohammadDarAbed/PalMazad.git
 
+      echo "✅ Checking remotes"
+      git remote -v
+
+      echo "✅ Pushing to GitHub (main branch)"
       git push github HEAD:main --force
     displayName: 'Mirror Azure DevOps Repo to GitHub'

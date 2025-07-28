@@ -4,25 +4,19 @@
       - main
 
 variables:
-- group: GITHUB_TOKEN_PALMAZAD
+- group: SYNC_TOKENS
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-  - checkout: self
+  - checkout: none
 
   - script: |
-      echo "✅ Configuring Git"
-      git config --global user.name "Azure DevOps"
-      git config --global user.email "devops@palmazad.com"
+      echo "AZURE_DEVOPS_PAT length: ${#AZURE_DEVOPS_PAT}"
 
-      echo "✅ Adding GitHub remote"
-      git remote add github https://$(GITHUB_TOKEN)@github.com/MohammadDarAbed/PalMazad.git
+      git clone --mirror https://user:$(AZURE_DEVOPS_PAT)@dev.azure.com/PalMazad/PalMazad/_git/PalMazadStore repo.git
+      cd repo.git
 
-      echo "✅ Checking remotes"
-      git remote -v
-
-      echo "✅ Pushing to GitHub (main branch)"
-      git push github HEAD:main --force
-    displayName: 'Mirror Azure DevOps Repo to GitHub'
+      git push --mirror https://$(GITHUB_TOKEN)@github.com/MohammadDarAbed/PalMazad.git
+    displayName: 'Mirror entire repo from Azure DevOps to GitHub'

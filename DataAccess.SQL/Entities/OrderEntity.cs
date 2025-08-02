@@ -1,22 +1,23 @@
-﻿
-using DataAccess.Models;
+﻿using DataAccess.Models;
+using System;
+using System.Collections.Generic;
 
-namespace DataAccess.Entities;
-
-public class OrderEntity : BaseEntity
+namespace DataAccess.Entities
 {
-    public int ProductId { get; set; } // FK to product
-    public ProductEntity Product { get; set; } = default!; // Product that was ordered
+    public class OrderEntity : BaseEntity
+    {
+        public int BuyerId { get; set; }               // The buyer (customer) who placed the order
+        public UserEntity Buyer { get; set; } = default!;
+        public int SellerId { get; set; }               // The buyer (customer) who placed the order
+        public UserEntity Seller { get; set; } = default!;
+        public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
+        public decimal TotalAmount { get; set; }
+        public double CommissionAmount { get; set; } // Platform's earned commission
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
+        public Address? Address { get; set; }
+        public List<OrderItemEntity> Items { get; set; } = new List<OrderItemEntity>();
+        public PaymentEntity? Payment { get; set; } // Payment related to this order
 
-    public int BuyerId { get; set; } // FK to user (buyer)
-    public UserEntity Buyer { get; set; } = default!; // User who made the purchase
-    public int SellerId { get; set; } // FK to user (seller)
-    public UserEntity Seller { get; set; } = default!; // Seller of the product
+    }
 
-    public decimal TotalAmount { get; set; } // Total amount paid by buyer
-    public decimal CommissionAmount { get; set; } // Platform's earned commission
-
-    public OrderStatus Status { get; set; } // Current status of the order
-
-    public PaymentEntity? Payment { get; set; } // Payment related to this order
 }

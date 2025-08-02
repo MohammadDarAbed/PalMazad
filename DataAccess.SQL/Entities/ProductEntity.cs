@@ -20,7 +20,5 @@ public class ProductEntity : BaseEntity
 
     public int CategoryId { get; set; } // FK to category
     public CategoryEntity Category { get; set; } = default!; // Navigation to product category
-
-    public ICollection<OrderEntity> Orders { get; set; } = new List<OrderEntity>(); // Orders related to this product
 }
 

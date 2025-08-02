@@ -13,6 +13,7 @@ public class AppDbContext : BaseDbContext
     public DbSet<ProductEntity> Products { get; set; } = default!;
     public DbSet<CategoryEntity> Categories { get; set; } = default!;
     public DbSet<OrderEntity> Orders { get; set; } = default!;
+    public DbSet<OrderItemEntity> OrderItemEntity { get; set; } = default!;
     public DbSet<PaymentEntity> Payments { get; set; } = default!;
     public DbSet<CommissionSettingEntity> CommissionSettings { get; set; } = default!;
     public DbSet<CartItemEntity> CartItemEntity { get; set; } = default!;
@@ -117,10 +118,6 @@ public class AppDbContext : BaseDbContext
             entity.Property(u => u.CreatedOn)
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            entity.HasMany(p => p.Orders)
-                .WithOne(o => o.Product)
-                .HasForeignKey(o => o.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // OrderEntity
@@ -202,6 +199,17 @@ public class AppDbContext : BaseDbContext
             .HasForeignKey(ci => ci.ProductId)
              .OnDelete(DeleteBehavior.NoAction);
 
+        // OrderItemEntity
+        modelBuilder.Entity<OrderEntity>()
+            .HasMany(o => o.Items)
+            .WithOne(i => i.Order)
+            .HasForeignKey(i => i.OrderId)
+            .OnDelete(DeleteBehavior.Cascade); // If an order is deleted, delete its items
+
+        modelBuilder.Entity<OrderItemEntity>()
+            .HasOne(i => i.Product)
+            .WithMany() // If you don't need navigation from Product to OrderItems
+            .HasForeignKey(i => i.ProductId);
     }
 
 

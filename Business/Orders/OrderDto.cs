@@ -11,7 +11,6 @@ namespace Business.Orders
         public decimal TotalAmount { get; set; }
         public string? Status { get; set; }
         public UserModelDto? Buyer { get; set; }
-        public UserModelDto? Seller { get; set; }
         public List<OrderItemDto>? Items { get; set; }
         public bool IsDeleted { get; set; }
         public required string CreatedBy { get; set; }

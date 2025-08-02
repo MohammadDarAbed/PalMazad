@@ -30,9 +30,9 @@ namespace DataAccess.Repositories
                 filter: p => p.IsDeleted == false,
                 includes: query => query
                 .Include(p => p.Buyer)
-                .Include(p => p.Seller)
                 .Include(p => p.Items)
-                .ThenInclude(p => p.Product)
+                    .ThenInclude(p => p.Product)
+                        .ThenInclude(su => su.Seller)
                  );
             return orders;
         }
@@ -42,9 +42,9 @@ namespace DataAccess.Repositories
             return await _orderRepo.GetByIdAsync(id,
                 includes: query => query
                 .Include(p => p.Buyer)
-                .Include(p => p.Seller)
                 .Include(p => p.Items)
-                .ThenInclude(i => i.Product)
+                    .ThenInclude(i => i.Product)
+                        .ThenInclude(su => su.Seller)
                  );
         }
 

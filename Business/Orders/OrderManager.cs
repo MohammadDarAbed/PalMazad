@@ -33,37 +33,17 @@ namespace Business.Orders
             Validations.CheckIfEntityDeleted(order.IsDeleted, orderId, "Order");
             return order.MapEntityToDto();
         }
-
-        //public async Task<OrderDto> CreateOrder(OrderModel orderModel)
-        //{
-
-        //    var (items, totalAmount) = await GetItemsAndTotalAmount(orderModel);
-        //    var buyer = await _userRepo.GetByIdAsync(orderModel.BuyerId);
-        //    var seller = await _userRepo.GetByIdAsync(orderModel.SellerId);
-        //    if (buyer == null) ExceptionManager.ThrowItemNotFoundException("User(Buyer)", "id");
-        //    if (seller == null) ExceptionManager.ThrowItemNotFoundException("User(Seller)", "id");
-        //    var entity = orderModel.MapModelToEntity(items, OrderStatus.Pending, totalAmount, 0.10);
-        //    await _orderRepo.CreateOrderAsync(entity);
-        //    entity.Seller = seller;
-        //    entity.Buyer = buyer;
-        //    entity.TotalAmount = totalAmount;
-        //    entity.Items = items;
-        //    return entity.MapEntityToDto();
-        //}
         public async Task<OrderDto> CreateOrder(OrderModel orderModel)
         {
-            await CheckIfSellerAndBuyerExists(orderModel);
+            await CheckIfBuyerExists(orderModel);
             var (items, totalAmount) = await GetItemsAndTotalAmount(orderModel);
-
             var entity = orderModel.MapModelToEntity(items, OrderStatus.Pending, totalAmount, 0.10);
 
             entity.BuyerId = orderModel.BuyerId;
-            entity.SellerId = orderModel.SellerId;
 
             await _orderRepo.CreateOrderAsync(entity);
 
             var savedOrder = await _orderRepo.GetByIdAsync(entity.Id);
-            //savedOrder.Items = items;
             return savedOrder.MapEntityToDto();
         }
 
@@ -76,13 +56,12 @@ namespace Business.Orders
         {
             var currentOrder = await _orderRepo.GetByIdAsync(orderId);
             if (currentOrder == null) ExceptionManager.ThrowItemNotFoundException("Order", orderId);
-            await CheckIfSellerAndBuyerExists(orderModel);
+            await CheckIfBuyerExists(orderModel);
 
             var (items, totalAmount) = await GetItemsAndTotalAmount(orderModel);
 
             var entity = orderModel.MapModelToEntity(items, currentOrder!.Status, totalAmount, 0.10);
             entity.BuyerId = orderModel.BuyerId;
-            entity.SellerId = orderModel.SellerId;
 
             entity!.Id = orderId;
             var updatedOrder = await _orderRepo.UpdateOrderAsync(entity);
@@ -109,20 +88,20 @@ namespace Business.Orders
             {
                 var product = await _productRepo.GetByIdAsync(item.ProductId);
                 if (product == null) ExceptionManager.ThrowItemNotFoundException("Product", item.ProductId);
-                var orderItemEntity = new OrderItemEntity { CreatedBy = "", CreatedOn = DateTimeOffset.Now, ProductId = product.Id, Quantity=item.Quantity };
+                var orderItemEntity = new OrderItemEntity {
+                    ProductId = product!.Id,
+                    Quantity = item.Quantity,
+                    CreatedBy = "", CreatedOn = DateTimeOffset.Now};
                 items.Add(orderItemEntity);
                 totalAmount += ( product.Price * item.Quantity);
             }
             return (items, totalAmount);
         }
 
-        private async Task CheckIfSellerAndBuyerExists(OrderModel orderModel)
+        private async Task CheckIfBuyerExists(OrderModel orderModel)
         {
             var buyer = await _userRepo.GetByIdAsync(orderModel.BuyerId);
-            var seller = await _userRepo.GetByIdAsync(orderModel.SellerId);
             if (buyer == null) ExceptionManager.ThrowItemNotFoundException("User(Buyer)", orderModel.BuyerId);
-            if (seller == null) ExceptionManager.ThrowItemNotFoundException("User(Seller)", orderModel.SellerId);
-
         }
     }
 }

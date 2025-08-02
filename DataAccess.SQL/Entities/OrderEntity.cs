@@ -8,8 +8,6 @@ namespace DataAccess.Entities
     {
         public int BuyerId { get; set; }               // The buyer (customer) who placed the order
         public UserEntity Buyer { get; set; } = default!;
-        public int SellerId { get; set; }               // The buyer (customer) who placed the order
-        public UserEntity Seller { get; set; } = default!;
         public DateTimeOffset OrderDate { get; set; } = DateTimeOffset.Now;
         public decimal TotalAmount { get; set; }
         public double CommissionAmount { get; set; } // Platform's earned commission

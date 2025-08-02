@@ -64,11 +64,6 @@ public class AppDbContext : BaseDbContext
                 .WithOne(o => o.Buyer)
                 .HasForeignKey(o => o.BuyerId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasMany(u => u.OrdersAsSeller)
-                .WithOne(o => o.Seller)
-                .HasForeignKey(o => o.SellerId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // CategoryEntity

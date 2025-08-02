@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Business.Users;
+using System;
 
 namespace Business.Products
 {
@@ -7,6 +8,7 @@ namespace Business.Products
         public int Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
+        public UserModelDto Seller{ get; set; }
 
     }
 }

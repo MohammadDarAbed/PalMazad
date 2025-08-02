@@ -12,6 +12,7 @@ namespace Business.Orders
         public string? Status { get; set; }
         public UserModelDto? Buyer { get; set; }
         public List<OrderItemDto>? Items { get; set; }
+        public string? Notes { get; set; } 
         public bool IsDeleted { get; set; }
         public required string CreatedBy { get; set; }
         public string? ModifiedBy { get; set; }

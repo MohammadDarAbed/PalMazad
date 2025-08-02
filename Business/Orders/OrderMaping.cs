@@ -9,7 +9,7 @@ namespace Business.Orders
     public static class OrderMaping
     {
         public static OrderEntity? MapModelToEntity(this OrderModel orderModel,
-            List<OrderItemEntity> items,  
+            List<OrderItemEntity> items,
             OrderStatus status, decimal totalAmount,
             double CommissionAmount)
         {
@@ -17,12 +17,12 @@ namespace Business.Orders
             var orderEntity = new OrderEntity
             {
                 BuyerId = orderModel.BuyerId,
-                SellerId = orderModel.SellerId,
                 Address = orderModel.Address,
                 Items = items,
                 CommissionAmount = CommissionAmount,
                 Status = status,
                 TotalAmount = totalAmount,
+                Notes = orderModel.Notes,
                 CreatedBy = "-",
                 ModifiedBy = "-",
                 CreatedOn = DateTimeOffset.Now,
@@ -30,18 +30,26 @@ namespace Business.Orders
             return orderEntity;
         }
 
-        public static OrderItemEntity? MapOrderItemModelToEntity(this OrderItemModel orderItemModel)
+        public static OrderEntity? MapModelToEntity(this CartCheckoutModel orderModel,
+            List<OrderItemEntity> items,
+            OrderStatus status, decimal totalAmount,
+            double CommissionAmount)
         {
-            if (orderItemModel == null) return null;
-            var orderItemEntity = new OrderItemEntity
+            if (orderModel == null) return null;
+            var orderEntity = new OrderEntity
             {
-                ProductId = orderItemModel.ProductId,
-                Quantity = orderItemModel.Quantity,
+                BuyerId = orderModel.BuyerId,
+                Address = orderModel.Address,
+                Items = items,
+                CommissionAmount = CommissionAmount,
+                Status = status,
+                TotalAmount = totalAmount,
+                Notes= orderModel.Notes,
                 CreatedBy = "-",
                 ModifiedBy = "-",
                 CreatedOn = DateTimeOffset.Now,
             };
-            return orderItemEntity;
+            return orderEntity;
         }
 
         public static OrderDto MapEntityToDto(this OrderEntity orderEntity)
@@ -68,26 +76,26 @@ namespace Business.Orders
                     ? new UserModelDto
                     {
                         Id = orderEntity.Buyer.Id,
-                        Name = orderEntity.Buyer.Name
-                    }
-                    : null,
-
-                Seller = orderEntity.Seller != null
-                    ? new UserModelDto
-                    {
-                        Id = orderEntity.Seller.Id,
-                        Name = orderEntity.Seller.Name
+                        Name = orderEntity.Buyer.Name,
+                        PhoneNumber = orderEntity.Buyer.PhoneNumber
                     }
                     : null,
 
                 Items = orderEntity.Items?.Select(i => new OrderItemDto
                 {
-                    Product = new ProductModelDto { Id = i.ProductId, Name = i.Product!.Name, Price = i.Product!.Price },
+                    Product = new ProductModelDto
+                    {
+                        Id = i.ProductId,
+                        Name = i.Product!.Name,
+                        Price = i.Product!.Price,
+                        Seller = new UserModelDto { Id = i.Product.SellerId, Name = i.Product.Seller.Name, PhoneNumber = i.Product.Seller.PhoneNumber }
+                    },
                     Quantity = i.Quantity
                 }).ToList(),
+                Notes = orderEntity.Notes,
                 CreatedBy = orderEntity.CreatedBy,
                 CreatedOn = orderEntity.CreatedOn,
-                IsDeleted = orderEntity.IsDeleted,  
+                IsDeleted = orderEntity.IsDeleted,
                 ModifiedBy = orderEntity.ModifiedBy,
                 ModifiedOn = orderEntity.ModifiedOn
             };

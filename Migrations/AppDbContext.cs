@@ -141,7 +141,10 @@ public class AppDbContext : BaseDbContext
                 .HasForeignKey<PaymentEntity>(p => p.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Buyer and Seller foreign keys configured via UserEntity above
+            entity.HasOne(o => o.Buyer)
+                .WithMany(u => u.OrdersAsBuyer)
+                .HasForeignKey(o => o.BuyerId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // PaymentEntity

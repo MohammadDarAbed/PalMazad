@@ -1,5 +1,7 @@
 ﻿
 using Business.CartShopping;
+using Business.Products;
+using Business.Users;
 using DataAccess.Entities;
 using DataAccess.Models;
 
@@ -29,9 +31,19 @@ namespace Business.Carts
                 Items = cartEntity.Items.Select(item => new CartItemModelBo
                 {
                     CartId = item.CartId,
+                    Product = new ProductModelDto
+                    {
+                        Id = item.Product.Id,
+                        Name = item.Product.Name,
+                        Price = item.Product.Price,
+                        Seller = new UserModelDto
+                        {
+                            Id = item.Product.Seller.Id,
+                            Name = item.Product.Seller.Name,
+                            PhoneNumber = item.Product.Seller.PhoneNumber,
+                        },
+                    },
                     Quantity = item.Quantity,
-                    ProductId = item.Product?.Id ?? 0,
-                    ProductName = item.Product?.Name ?? string.Empty
                 }).ToList(),
                 //UserId = cartEntity.User.Id,
                 UserId = 1, // TODO: userId

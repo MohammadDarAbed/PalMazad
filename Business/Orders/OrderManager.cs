@@ -1,4 +1,6 @@
 ﻿
+using Business.CartShopping;
+using Business.Managers;
 using Business.Shared;
 using DataAccess.Entities;
 using DataAccess.Models;
@@ -11,13 +13,15 @@ namespace Business.Orders
         Task<List<OrderDto>> GetOrders();
         Task<OrderDto> GetOrderById(int orderId);
         Task<OrderDto> CreateOrder(OrderModel orderModel);
+        Task<OrderDto> CreateOrderFromCart(CartCheckoutModel orderModel, int cartId);
         Task<OrderDto> UpdateOrder(int orderId, OrderModel orderModel);
         Task DeleteOrder(int id);
     }
 
     public class OrderManager(IOrderRepository _orderRepo, 
         IProductRepository _productRepo,
-        IUserRepository _userRepo) : IOrderManager
+        IUserRepository _userRepo,
+        ICartManager _cartManager) : IOrderManager
     {
         public async Task<List<OrderDto>> GetOrders()
         {
@@ -33,9 +37,10 @@ namespace Business.Orders
             Validations.CheckIfEntityDeleted(order.IsDeleted, orderId, "Order");
             return order.MapEntityToDto();
         }
+
         public async Task<OrderDto> CreateOrder(OrderModel orderModel)
         {
-            await CheckIfBuyerExists(orderModel);
+            await CheckIfBuyerExists(orderModel.BuyerId);
             var (items, totalAmount) = await GetItemsAndTotalAmount(orderModel);
             var entity = orderModel.MapModelToEntity(items, OrderStatus.Pending, totalAmount, 0.10);
 
@@ -45,6 +50,25 @@ namespace Business.Orders
 
             var savedOrder = await _orderRepo.GetByIdAsync(entity.Id);
             return savedOrder.MapEntityToDto();
+        }
+        public async Task<OrderDto> CreateOrderFromCart(CartCheckoutModel orderModel, int cartId)
+        {
+            await CheckIfBuyerExists(orderModel.BuyerId);
+            var cartItems = await _cartManager.GetCartItemsAsync(cartId);
+            var totalAmount = CalculateCartItemsTotalAmount(cartItems);
+            var orderItemsEntity = cartItems.Select(i => new OrderItemEntity
+            { 
+                ProductId = i.Product.Id,
+                Quantity = i.Quantity,
+                CreatedBy = "",
+                CreatedOn = DateTimeOffset.Now
+            }).ToList();
+            var entity = orderModel.MapModelToEntity(orderItemsEntity, OrderStatus.Pending, totalAmount, 0.10);
+            entity.BuyerId = orderModel.BuyerId;
+            await _orderRepo.CreateOrderAsync(entity);
+            var savedOrder = await _orderRepo.GetByIdAsync(entity.Id);
+            return savedOrder.MapEntityToDto();
+
         }
 
         public async Task DeleteOrder(int id)
@@ -56,7 +80,7 @@ namespace Business.Orders
         {
             var currentOrder = await _orderRepo.GetByIdAsync(orderId);
             if (currentOrder == null) ExceptionManager.ThrowItemNotFoundException("Order", orderId);
-            await CheckIfBuyerExists(orderModel);
+            await CheckIfBuyerExists(orderModel.BuyerId);
 
             var (items, totalAmount) = await GetItemsAndTotalAmount(orderModel);
 
@@ -98,10 +122,20 @@ namespace Business.Orders
             return (items, totalAmount);
         }
 
-        private async Task CheckIfBuyerExists(OrderModel orderModel)
+        private decimal CalculateCartItemsTotalAmount(List<CartItemModelBo> items)
         {
-            var buyer = await _userRepo.GetByIdAsync(orderModel.BuyerId);
-            if (buyer == null) ExceptionManager.ThrowItemNotFoundException("User(Buyer)", orderModel.BuyerId);
+            decimal totalAmount = 0;
+            foreach (var item in items)
+            {
+                totalAmount += (item.Product.Price * item.Quantity);
+            }
+            return totalAmount;
+        }
+
+        private async Task CheckIfBuyerExists(int buyerId)
+        {
+            var buyer = await _userRepo.GetByIdAsync(buyerId);
+            if (buyer == null) ExceptionManager.ThrowItemNotFoundException("User(Buyer)", buyerId);
         }
     }
 }

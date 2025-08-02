@@ -13,6 +13,7 @@ namespace DataAccess.Entities
         public double CommissionAmount { get; set; } // Platform's earned commission
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
         public Address? Address { get; set; }
+        public string? Notes { get; set; } // Optional: Any extra info from buyer
         public List<OrderItemEntity> Items { get; set; } = new List<OrderItemEntity>();
         public PaymentEntity? Payment { get; set; } // Payment related to this order
 

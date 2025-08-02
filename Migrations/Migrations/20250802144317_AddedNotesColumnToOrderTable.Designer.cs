@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PalMazadStore.Migrations;
 
@@ -11,9 +12,11 @@ using PalMazadStore.Migrations;
 namespace Migrations.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250802144317_AddedNotesColumnToOrderTable")]
+    partial class AddedNotesColumnToOrderTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -213,9 +216,14 @@ namespace Migrations.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("UserEntityId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BuyerId");
+
+                    b.HasIndex("UserEntityId");
 
                     b.ToTable("Orders");
                 });
@@ -478,6 +486,10 @@ namespace Migrations.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("DataAccess.Entities.UserEntity", null)
+                        .WithMany("OrdersAsSeller")
+                        .HasForeignKey("UserEntityId");
+
                     b.OwnsOne("DataAccess.Models.Address", "Address", b1 =>
                         {
                             b1.Property<int>("OrderEntityId")
@@ -587,6 +599,8 @@ namespace Migrations.Migrations
                     b.Navigation("Cart");
 
                     b.Navigation("OrdersAsBuyer");
+
+                    b.Navigation("OrdersAsSeller");
 
                     b.Navigation("Products");
                 });

@@ -29,6 +29,15 @@ namespace API.Controllers
             return Ok(order);
         }
 
+        [HttpPost]
+        [Route("{cartId:min(1)}/checkout")]
+        [ProducesResponseType(typeof(OrderDto), (int)HttpStatusCode.Created)]
+        public async Task<ActionResult<OrderDto>> CreateOrderFromCart([FromBody] CartCheckoutModel orderModel, int cartId)
+        {
+            var order = await _orderManager.CreateOrderFromCart(orderModel, cartId);
+            return Ok(order);
+        }
+
         [HttpGet]
         [Route("orders")]
         [ProducesResponseType(typeof(List<OrderDto>), (int)HttpStatusCode.OK)]

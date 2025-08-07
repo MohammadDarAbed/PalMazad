@@ -1,7 +1,9 @@
 ﻿
 using Autofac;
 using Business.Categories;
+using Business.Email;
 using Business.Managers;
+using Business.Orders;
 using Business.Products;
 using Business.Users;
 using DataAccess.Repositories;
@@ -50,14 +52,30 @@ namespace Business.Infrastructure
                 .RegisterType<CategoryManager>()
                 .As<ICategoryManager>()
                 .InstancePerLifetimeScope();
+
             builder
                 .RegisterType<UserManager>()
                 .As<IUserManager>()
                 .InstancePerLifetimeScope();
+
             builder
                 .RegisterType<CartManager>()
                 .As<ICartManager>()
                 .InstancePerLifetimeScope();
+            builder
+                .RegisterType<OrderManager>()
+                .As<IOrderManager>()
+                .InstancePerLifetimeScope();
+            builder
+                .RegisterType<EmailManager>()
+                .As<IEmailManager>()
+                .InstancePerLifetimeScope();
+
+            // Services:
+            builder
+            .RegisterType<EmailService>()
+            .As<IEmailService>()
+            .InstancePerLifetimeScope();
 
             // Repositories:
             builder
@@ -69,13 +87,20 @@ namespace Business.Infrastructure
                 .RegisterType<CategoryRepository>()
                 .As<ICategoryRepository>()
                 .InstancePerLifetimeScope(); 
+
             builder
                 .RegisterType<UserRepository>()
                 .As<IUserRepository>()
                 .InstancePerLifetimeScope();
+
             builder
                 .RegisterType<CartRepository>()
                 .As<ICartRepository>()
+                .InstancePerLifetimeScope();
+
+            builder
+                .RegisterType<OrderRepository>()
+                .As<IOrderRepository>()
                 .InstancePerLifetimeScope();
 
             builder

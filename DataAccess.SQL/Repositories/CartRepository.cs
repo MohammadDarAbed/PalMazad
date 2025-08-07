@@ -1,6 +1,7 @@
 ﻿using DataAccess.Entities;
 using Microsoft.EntityFrameworkCore;
 using Shared.Interfaces;
+using System.Linq.Expressions;
 
 namespace DataAccess.Repositories
 {
@@ -9,6 +10,7 @@ namespace DataAccess.Repositories
         Task<List<CartItemEntity>> GetCartItemsAsync(int cartId);
         Task<bool> AddItemsToCartAsync(int userId, List<CartItemEntity> items);
         Task<CartEntity?> GetCartByUserIdAsync(int userId);
+        Task<bool> IsExistAsync(Expression<Func<CartEntity, bool>> filters);
     }
 
     public class CartRepository : ICartRepository
@@ -27,7 +29,10 @@ namespace DataAccess.Repositories
             // Get all cart items filtered by cartId and include Product navigation property
             return await _cartItemRepo.GetItemsAsync(
                 filter: ci => ci.CartId == cartId,
-                includes: query => query.Include(ci => ci.Product));
+                includes: query => query
+                .Include(ci => ci.Product)
+                    .ThenInclude(ps => ps.Seller)
+                );
         }
 
         public async Task<bool> AddItemsToCartAsync(int userId, List<CartItemEntity> items)
@@ -73,6 +78,11 @@ namespace DataAccess.Repositories
             );
 
             return carts.FirstOrDefault();
+        }
+
+        public async Task<bool> IsExistAsync(Expression<Func<CartEntity, bool>> filters)
+        {
+            return await _cartRepo.ExistsAsync(new[] { filters });
         }
     }
 }

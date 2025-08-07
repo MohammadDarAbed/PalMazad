@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess.SQ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Migrations", "Migrations\Migrations.csproj", "{CCDDE9F5-0FEB-4441-8CB9-F7420188FF04}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Observer", "Observer\Observer.csproj", "{2FBA143C-7DCD-4BE6-8188-664678596040}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{CCDDE9F5-0FEB-4441-8CB9-F7420188FF04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCDDE9F5-0FEB-4441-8CB9-F7420188FF04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCDDE9F5-0FEB-4441-8CB9-F7420188FF04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FBA143C-7DCD-4BE6-8188-664678596040}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FBA143C-7DCD-4BE6-8188-664678596040}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FBA143C-7DCD-4BE6-8188-664678596040}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FBA143C-7DCD-4BE6-8188-664678596040}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

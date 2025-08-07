@@ -13,6 +13,7 @@ public class AppDbContext : BaseDbContext
     public DbSet<ProductEntity> Products { get; set; } = default!;
     public DbSet<CategoryEntity> Categories { get; set; } = default!;
     public DbSet<OrderEntity> Orders { get; set; } = default!;
+    public DbSet<OrderItemEntity> OrderItemEntity { get; set; } = default!;
     public DbSet<PaymentEntity> Payments { get; set; } = default!;
     public DbSet<CommissionSettingEntity> CommissionSettings { get; set; } = default!;
     public DbSet<CartItemEntity> CartItemEntity { get; set; } = default!;
@@ -63,11 +64,6 @@ public class AppDbContext : BaseDbContext
                 .WithOne(o => o.Buyer)
                 .HasForeignKey(o => o.BuyerId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            entity.HasMany(u => u.OrdersAsSeller)
-                .WithOne(o => o.Seller)
-                .HasForeignKey(o => o.SellerId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // CategoryEntity
@@ -117,10 +113,6 @@ public class AppDbContext : BaseDbContext
             entity.Property(u => u.CreatedOn)
                 .HasDefaultValueSql("GETUTCDATE()");
 
-            entity.HasMany(p => p.Orders)
-                .WithOne(o => o.Product)
-                .HasForeignKey(o => o.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // OrderEntity
@@ -140,6 +132,10 @@ public class AppDbContext : BaseDbContext
                 .HasConversion<string>()
                 .IsRequired();
 
+            entity.Property(o => o.PaymentStatus)
+                .HasConversion<string>()
+                .IsRequired();
+
             entity.Property(o => o.CreatedOn)
                 .HasDefaultValueSql("GETUTCDATE()");
 
@@ -149,7 +145,10 @@ public class AppDbContext : BaseDbContext
                 .HasForeignKey<PaymentEntity>(p => p.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Buyer and Seller foreign keys configured via UserEntity above
+            entity.HasOne(o => o.Buyer)
+                .WithMany(u => u.OrdersAsBuyer)
+                .HasForeignKey(o => o.BuyerId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         // PaymentEntity
@@ -164,9 +163,6 @@ public class AppDbContext : BaseDbContext
             entity.Property(p => p.PaymentMethod)
                 .IsRequired()
                 .HasMaxLength(100);
-
-            entity.Property(p => p.IsSuccessful)
-                .IsRequired();
 
             entity.Property(p => p.CreatedOn)
                 .HasDefaultValueSql("GETUTCDATE()");
@@ -202,6 +198,17 @@ public class AppDbContext : BaseDbContext
             .HasForeignKey(ci => ci.ProductId)
              .OnDelete(DeleteBehavior.NoAction);
 
+        // OrderItemEntity
+        modelBuilder.Entity<OrderEntity>()
+            .HasMany(o => o.Items)
+            .WithOne(i => i.Order)
+            .HasForeignKey(i => i.OrderId)
+            .OnDelete(DeleteBehavior.Cascade); // If an order is deleted, delete its items
+
+        modelBuilder.Entity<OrderItemEntity>()
+            .HasOne(i => i.Product)
+            .WithMany() // If you don't need navigation from Product to OrderItems
+            .HasForeignKey(i => i.ProductId);
     }
 
 

@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Autofac" Version="8.3.0" />
+		<PackageReference Include="MediatR" Version="13.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
 		<PackageReference Include="PalMazadShared" Version="1.0.6" />
 	</ItemGroup>
@@ -15,7 +16,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\DataAccess.SQL\DataAccess.csproj" />
 		<ProjectReference Include="..\Migrations\Migrations.csproj" />
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+		<ProjectReference Include="..\Observer\Observer.csproj" />
 	</ItemGroup>
 
 

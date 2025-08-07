@@ -1,11 +1,10 @@
 using Autofac;
-using Autofac.Core;
 using Autofac.Extensions.DependencyInjection;
+using Business.Email;
 using Business.Infrastructure;
 using Business.Middlewares;
 using Microsoft.EntityFrameworkCore;
-using Shared.Infrastructure;
-using System.Configuration;
+using Observer;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -16,6 +15,9 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+// Add RabbitMQ + publishers + consumers
+builder.Services.AddRabbitMq("rabbitmq://localhost", "admin", "1162016");
+
 //builder.Services.AddDbContext<BaseDbContext>(options =>
 //    options.UseSqlServer(connectionString));
 // Register business layer.
@@ -27,7 +29,10 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
     containerBuilder.RegisterModule(new DependencyInjectionModule(builder.Configuration));
 });
-
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(EmailEventHandler).Assembly);
+});
 //builder.Services.AddControllers()
 //    .AddJsonOptions(options =>
 //    {

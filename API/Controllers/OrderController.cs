@@ -71,5 +71,12 @@ namespace API.Controllers
             await _orderManager.DeleteOrder(id);
             return NoContent();
         }
+
+        [HttpPut("{id}/payment-status")]
+        public async Task<IActionResult> UpdatePaymentStatus(int id, [FromBody] UpdatePaymentStatusModel model)
+        {
+            await _orderManager.UpdatePaymentStatusAsync(id, model);
+            return Ok();
+        }
     }
 }

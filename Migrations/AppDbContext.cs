@@ -132,6 +132,10 @@ public class AppDbContext : BaseDbContext
                 .HasConversion<string>()
                 .IsRequired();
 
+            entity.Property(o => o.PaymentStatus)
+                .HasConversion<string>()
+                .IsRequired();
+
             entity.Property(o => o.CreatedOn)
                 .HasDefaultValueSql("GETUTCDATE()");
 
@@ -159,9 +163,6 @@ public class AppDbContext : BaseDbContext
             entity.Property(p => p.PaymentMethod)
                 .IsRequired()
                 .HasMaxLength(100);
-
-            entity.Property(p => p.IsSuccessful)
-                .IsRequired();
 
             entity.Property(p => p.CreatedOn)
                 .HasDefaultValueSql("GETUTCDATE()");

@@ -5,6 +5,7 @@ using Business.Shared;
 using DataAccess.Entities;
 using DataAccess.Models;
 using DataAccess.Repositories;
+using Observer.Publishers;
 
 namespace Business.Orders
 {
@@ -15,14 +16,31 @@ namespace Business.Orders
         Task<OrderDto> CreateOrder(OrderModel orderModel);
         Task<OrderDto> CreateOrderFromCart(CartCheckoutModel orderModel, int cartId);
         Task<OrderDto> UpdateOrder(int orderId, OrderModel orderModel);
+        Task<OrderDto> UpdatePaymentStatusAsync(int id, UpdatePaymentStatusModel model);
         Task DeleteOrder(int id);
     }
 
-    public class OrderManager(IOrderRepository _orderRepo, 
-        IProductRepository _productRepo,
-        IUserRepository _userRepo,
-        ICartManager _cartManager) : IOrderManager
+    public class OrderManager : IOrderManager
     {
+        private readonly IOrderRepository _orderRepo;
+        private readonly IProductRepository _productRepo;
+        private readonly IUserRepository _userRepo;
+        private readonly ICartManager _cartManager;
+        private readonly IOrderPublisher _orderPublisher;
+
+        public OrderManager(
+           IOrderRepository orderRepo,
+           IProductRepository productRepo,
+           IUserRepository userRepo,
+           ICartManager cartManager,
+           IOrderPublisher orderPublisher)
+        {
+            _orderRepo = orderRepo;
+            _productRepo = productRepo;
+            _userRepo = userRepo;
+            _cartManager = cartManager;
+            _orderPublisher = orderPublisher;
+        }
         public async Task<List<OrderDto>> GetOrders()
         {
             var orders = await _orderRepo.GetAllOrdersAsync();
@@ -47,8 +65,10 @@ namespace Business.Orders
             entity.BuyerId = orderModel.BuyerId;
 
             await _orderRepo.CreateOrderAsync(entity);
-
             var savedOrder = await _orderRepo.GetByIdAsync(entity.Id);
+
+            // Publish event after creation
+            await _orderPublisher.PublishOrderCreated(savedOrder!.Id, totalAmount, savedOrder.Buyer.Email);
             return savedOrder.MapEntityToDto();
         }
         public async Task<OrderDto> CreateOrderFromCart(CartCheckoutModel orderModel, int cartId)
@@ -57,7 +77,7 @@ namespace Business.Orders
             var cartItems = await _cartManager.GetCartItemsAsync(cartId);
             var totalAmount = CalculateCartItemsTotalAmount(cartItems);
             var orderItemsEntity = cartItems.Select(i => new OrderItemEntity
-            { 
+            {
                 ProductId = i.Product.Id,
                 Quantity = i.Quantity,
                 CreatedBy = "",
@@ -67,6 +87,8 @@ namespace Business.Orders
             entity.BuyerId = orderModel.BuyerId;
             await _orderRepo.CreateOrderAsync(entity);
             var savedOrder = await _orderRepo.GetByIdAsync(entity.Id);
+            // Publish event after creation
+            await _orderPublisher.PublishOrderCreated(savedOrder!.Id, totalAmount, savedOrder.Buyer.Email);
             return savedOrder.MapEntityToDto();
 
         }
@@ -93,6 +115,34 @@ namespace Business.Orders
             return savedUpdatedOrder.MapEntityToDto();
         }
 
+        public async Task<OrderDto> UpdatePaymentStatusAsync(int id, UpdatePaymentStatusModel model)
+        {
+            var order = await _orderRepo.GetByIdAsync(id);
+            await CheckIfNotExists(id);
+            var items = await GetItemsntitiesForm(order!.Items);
+            var entityUpdated = new OrderEntity
+            {
+                Id = id,
+                BuyerId = order.BuyerId,
+                Notes = order.Notes,
+                TotalAmount = order.TotalAmount,
+                Address = order.Address,
+                PaymentStatus = model.Status,
+                CreatedBy = order.CreatedBy,
+                CreatedOn = order.CreatedOn,
+                CommissionAmount = order.CommissionAmount,
+                Status = order.Status,
+                Payment = order.Payment,
+                IsDeleted = order.IsDeleted,
+                ModifiedBy = order.ModifiedBy,
+                ModifiedOn = order.ModifiedOn,
+                OrderDate = order.OrderDate,
+                Items = items
+            };
+            var updatedOrder = await _orderRepo.UpdateOrderAsync(entityUpdated);
+            var savedUpdatedOrder = await _orderRepo.GetByIdAsync(order.Id);
+            return savedUpdatedOrder!.MapEntityToDto();
+        }
         // Helpers:
 
         private async Task CheckIfNotExists(int id)
@@ -112,14 +162,36 @@ namespace Business.Orders
             {
                 var product = await _productRepo.GetByIdAsync(item.ProductId);
                 if (product == null) ExceptionManager.ThrowItemNotFoundException("Product", item.ProductId);
-                var orderItemEntity = new OrderItemEntity {
+                var orderItemEntity = new OrderItemEntity
+                {
                     ProductId = product!.Id,
                     Quantity = item.Quantity,
-                    CreatedBy = "", CreatedOn = DateTimeOffset.Now};
+                    CreatedBy = "",
+                    CreatedOn = DateTimeOffset.Now
+                };
                 items.Add(orderItemEntity);
-                totalAmount += ( product.Price * item.Quantity);
+                totalAmount += (product.Price * item.Quantity);
             }
             return (items, totalAmount);
+        }
+
+        private async Task<List<OrderItemEntity>> GetItemsntitiesForm(List<OrderItemEntity> items)
+        {
+            List<OrderItemEntity> orderItemEntities = [];
+            foreach (var item in items)
+            {
+                var product = await _productRepo.GetByIdAsync(item.ProductId);
+                if (product == null) ExceptionManager.ThrowItemNotFoundException("Product", item.ProductId);
+                var orderItemEntity = new OrderItemEntity
+                {
+                    ProductId = product!.Id,
+                    Quantity = item.Quantity,
+                    CreatedBy = "",
+                    CreatedOn = DateTimeOffset.Now
+                };
+                orderItemEntities.Add(orderItemEntity);
+            }
+            return orderItemEntities;
         }
 
         private decimal CalculateCartItemsTotalAmount(List<CartItemModelBo> items)

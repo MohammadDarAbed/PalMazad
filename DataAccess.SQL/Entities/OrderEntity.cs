@@ -1,6 +1,5 @@
 ﻿using DataAccess.Models;
-using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAccess.Entities
 {
@@ -15,6 +14,9 @@ namespace DataAccess.Entities
         public Address? Address { get; set; }
         public string? Notes { get; set; } // Optional: Any extra info from buyer
         public List<OrderItemEntity> Items { get; set; } = new List<OrderItemEntity>();
+
+        [Column(TypeName = "varchar(20)")]
+        public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Unpaid;
         public PaymentEntity? Payment { get; set; } // Payment related to this order
 
     }

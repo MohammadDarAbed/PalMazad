@@ -1,6 +1,7 @@
 ﻿
 using Autofac;
 using Business.Categories;
+using Business.Email;
 using Business.Managers;
 using Business.Orders;
 using Business.Products;
@@ -65,6 +66,16 @@ namespace Business.Infrastructure
                 .RegisterType<OrderManager>()
                 .As<IOrderManager>()
                 .InstancePerLifetimeScope();
+            builder
+                .RegisterType<EmailManager>()
+                .As<IEmailManager>()
+                .InstancePerLifetimeScope();
+
+            // Services:
+            builder
+            .RegisterType<EmailService>()
+            .As<IEmailService>()
+            .InstancePerLifetimeScope();
 
             // Repositories:
             builder

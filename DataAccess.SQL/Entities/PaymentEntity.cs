@@ -7,8 +7,7 @@ namespace DataAccess.Entities
         public OrderEntity Order { get; set; } = default!; // Related order
         public decimal Amount { get; set; } // Total payment amount
         public string PaymentMethod { get; set; } = default!; // e.g., Credit Card, PayPal, etc.
-        public bool IsSuccessful { get; set; } // Whether the payment was successful
-
+        public string? TransactionId { get; set; } // Gateway transaction ID
     }
 
 }

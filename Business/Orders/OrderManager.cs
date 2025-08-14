@@ -169,6 +169,10 @@ namespace Business.Orders
                     CreatedBy = "",
                     CreatedOn = DateTimeOffset.Now
                 };
+                if (items.Any(i => i.ProductId == orderItemEntity.ProductId))
+                {
+                    ExceptionManager.ThrowDuplicationException("OrderItemEntity", product.Name);
+                }
                 items.Add(orderItemEntity);
                 totalAmount += (product.Price * item.Quantity);
             }

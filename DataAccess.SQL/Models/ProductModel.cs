@@ -1,9 +1,7 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
+
 namespace DataAccess.Models
 {
-    using DataAccess.Entities;
-    using System.ComponentModel.DataAnnotations;
-
     public class ProductModel
     {
         [Required(ErrorMessage = "Product name is required.")]

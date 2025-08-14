@@ -68,7 +68,8 @@ namespace Business.Orders
                         Street = orderEntity.Address.Street,
                         City = orderEntity.Address.City,
                         State = orderEntity.Address.State,
-                        PostalCode = orderEntity.Address.PostalCode
+                        PostalCode = orderEntity.Address.PostalCode,
+                        Country = orderEntity.Address.Country
                     }
                     : null,
 

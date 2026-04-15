@@ -1,3 +1,76 @@
+# 🟦 PalMazad API
+
+Scalable ASP.NET Core Web API built using clean architecture principles, designed for real-world marketplace systems.
+
+---
+
+## 🚀 Overview
+
+PalMazad API is the backend system powering a full-featured marketplace platform.
+
+It handles business logic, authentication, data management, and communication between different parts of the system.
+
+---
+## 🧩 System Context
+
+This API is part of a full-stack system consisting of:
+- Angular frontend application
+- Authentication service
+- Backend API (this repository)
+
+The system is designed to simulate a real-world marketplace platform.
+
+## 🧠 Architecture
+
+- Clean Architecture
+- Layered design (Core, Infrastructure, API)
+- Separation of concerns
+- Dependency Injection
+- Modular services structure
+
+---
+
+## ⚙️ Key Features (Technical)
+
+- RESTful API design
+- Authentication & Authorization
+- Scalable and maintainable code structure
+- Error handling and validation
+- Integration with frontend (Angular)
+- Designed for real-world business workflows
+
+---
+
+## 🧪 Testing
+
+- Unit Testing (business logic validation)
+- Integration Testing (API endpoints and data flow)
+
+---
+
+## ☁️ Deployment
+
+- Deployed using Azure services
+- CI/CD pipelines integration
+
+---
+
+## 🔗 Related Projects
+
+- 🟨 Frontend (Angular) → [Frontend Repo](https://github.com/MohammadDarAbed/WebPalMAzad)
+- 🔐 Authentication Service → [Authentication Repo](https://github.com/MohammadDarAbed/Authentication)
+- 💳Payment: → [Payment Repo](https://github.com/MohammadDarAbed/Payment)
+- 🌐Shared → [Shared Repo](https://github.com/MohammadDarAbed/Shared)
+
+---
+
+## 🛠️ Tech Stack
+
+- ASP.NET Core
+- Entity Framework Core
+- SQL Server
+- JWT Authentication
+  
 # Welcome to PalMazad – The Smart Marketplace for Unique Products and Services
 
 **PalMazad** is a modern online marketplace that connects buyers and sellers in one powerful platform.  
